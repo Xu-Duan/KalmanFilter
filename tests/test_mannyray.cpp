@@ -15,9 +15,9 @@ int main() {
     Q << 8.4741e-04,1.2257e-03,1.2257e-03,2.4557e-03; 
     P << 1, 0, 0, 0.01;
     KalmanFilter kf(A, H, R, Q);
-    kf.init(Eigen::MatrixXd::Zero(n, 1), P);
+    kf.init(Eigen::VectorXd::Zero(n, 1), P);
     kf.predict();
-    Eigen::MatrixXd z = Eigen::MatrixXd::Zero(m, 1);
+    Eigen::VectorXd z = Eigen::VectorXd::Zero(m, 1);
     kf.update(z);
     std::cout << "State: " << kf.get_state() << std::endl;
     return 0;
