@@ -19,6 +19,6 @@ int main() {
     kf.predict();
     Eigen::VectorXd z = Eigen::VectorXd::Zero(m, 1);
     kf.update(z);
-    std::cout << "State: " << kf.get_state() << std::endl;
+    //std::cout << "State: " << kf.get_state() << std::endl;
     return 0;
 }

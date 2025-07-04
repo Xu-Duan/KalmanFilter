@@ -6,11 +6,11 @@ public:
                 Eigen::MatrixXd R, Eigen::MatrixXd Q);
     KalmanFilter(Eigen::MatrixXd A, Eigen::MatrixXd H, 
                 Eigen::MatrixXd R, Eigen::MatrixXd Q);
-    ~KalmanFilter();
+    virtual ~KalmanFilter();
 
     void init(Eigen::VectorXd x, Eigen::MatrixXd P = Eigen::MatrixXd());
-    void predict(Eigen::VectorXd u = Eigen::VectorXd());
-    void update(const Eigen::VectorXd &z);
+    virtual void predict(Eigen::VectorXd u = Eigen::VectorXd());
+    virtual void update(const Eigen::VectorXd &z);
     Eigen::VectorXd get_state() const;
 
 protected:
