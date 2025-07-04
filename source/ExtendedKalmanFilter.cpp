@@ -5,12 +5,13 @@
 ExtendedKalmanFilter::ExtendedKalmanFilter(
     const Eigen::MatrixXd& Q, const Eigen::MatrixXd& R,
     std::function<VectorXreal(const VectorXreal&, const VectorXreal&)> f_func,
-    std::function<VectorXreal(const VectorXreal&)> h_func)
-    : KalmanFilter(Eigen::MatrixXd::Identity(Q.rows(), Q.rows()), // dummy A matrix
-                   Eigen::MatrixXd::Zero(Q.rows(), 1),            // dummy B matrix (indicates control)
-                   Eigen::MatrixXd::Identity(R.rows(), Q.rows()), // dummy H matrix
-                   R, Q),
-      f(f_func), h(h_func) {
+    std::function<VectorXreal(const VectorXreal&)> h_func){
+    n = Q.rows();
+    m = R.rows();
+    this->R = R;
+    this->Q = Q;
+    f = f_func; // Store the nonlinear state transition function
+    h = h_func; // Store the nonlinear measurement function
     // n_u will be > 0 because we passed a B matrix
 }
 
@@ -18,12 +19,12 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(
 ExtendedKalmanFilter::ExtendedKalmanFilter(
     const Eigen::MatrixXd& Q, const Eigen::MatrixXd& R,
     std::function<VectorXreal(const VectorXreal&)> f_no_control,
-    std::function<VectorXreal(const VectorXreal&)> h_func)
-    : KalmanFilter(Eigen::MatrixXd::Identity(Q.rows(), Q.rows()), // dummy A matrix
-                   Eigen::MatrixXd::Identity(R.rows(), Q.rows()), // dummy H matrix
-                   R, Q),
-      h(h_func) {
-    // Convert f_no_control to the general form f(x, u)
+    std::function<VectorXreal(const VectorXreal&)> h_func){
+    n = Q.rows();
+    m = R.rows();
+    this->R = R;
+    this->Q = Q;
+    h = h_func; // Store the nonlinear measurement function
     f = [f_no_control](const VectorXreal& x, const VectorXreal& u) -> VectorXreal {
         return f_no_control(x);
     };

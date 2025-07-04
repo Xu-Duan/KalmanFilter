@@ -16,5 +16,6 @@ make test
 ## Todo list
 - [x] Basic funtionality
 - [x] Extended Kalman filter
+- [x] Unsented Kalman filter
 - [ ] Ensemble Kalman filter
 - [ ] Bayesian filter

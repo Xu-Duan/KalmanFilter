@@ -1,8 +1,8 @@
 #include "KalmanFilter.hpp"
 #include <iostream>
 
-KalmanFilter::KalmanFilter(Eigen::MatrixXd A, Eigen::MatrixXd B, Eigen::MatrixXd H, 
-    Eigen::MatrixXd R, Eigen::MatrixXd Q) {
+KalmanFilter::KalmanFilter(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, const Eigen::MatrixXd& H, 
+    const Eigen::MatrixXd& R, const Eigen::MatrixXd& Q) {
     n = A.rows();
     m = H.rows();
     n_u = B.cols();
@@ -13,8 +13,8 @@ KalmanFilter::KalmanFilter(Eigen::MatrixXd A, Eigen::MatrixXd B, Eigen::MatrixXd
     this->Q = Q;
 }
 
-KalmanFilter::KalmanFilter(Eigen::MatrixXd A, Eigen::MatrixXd H, 
-    Eigen::MatrixXd R, Eigen::MatrixXd Q) {
+KalmanFilter::KalmanFilter(const Eigen::MatrixXd& A, const Eigen::MatrixXd& H, 
+    const Eigen::MatrixXd& R, const Eigen::MatrixXd& Q) {
     n = A.rows();
     m = H.rows();
     n_u = 0;
@@ -24,25 +24,12 @@ KalmanFilter::KalmanFilter(Eigen::MatrixXd A, Eigen::MatrixXd H,
     this->Q = Q;
 }
 
-KalmanFilter::~KalmanFilter() {
-}
-
-
-void KalmanFilter::init(Eigen::VectorXd x, Eigen::MatrixXd P) {
-    this->x = x;
-    this->P = (P.size() == 0) ? Eigen::MatrixXd::Identity(n, n) : P;
-}
-
-Eigen::VectorXd KalmanFilter::get_state() const {
-    return this->x;
-}
-
 void KalmanFilter::predict(Eigen::VectorXd u) {
     if (n_u == 0 && u.size() > 0) {
         std::cout << "ERROR: KalmanFilter::predict: No control matrix provided" << std::endl;
         return;
     }
-
+    
     if (n_u > 0 && u.size() == 0) {
         u = Eigen::VectorXd::Zero(n_u);  // Fixed: should be VectorXd, not MatrixXd
     }
