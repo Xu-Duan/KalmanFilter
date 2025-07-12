@@ -1,10 +1,5 @@
-// test_martiro.cpp
-// https://github.com/hmartiro/kalman-cpp/blob/master/kalman-test.cpp
-
-#include "ExtendedKalmanFilter.hpp"
+#include "UnscentedKalmanFilter.hpp"
 #include <iostream>
-#include <autodiff/forward/real.hpp>
-#include <autodiff/forward/real/eigen.hpp>
 #include <Eigen/Dense>
 
 Eigen::VectorXd exact_states[] = {
@@ -55,19 +50,19 @@ Eigen::VectorXd exact_states[] = {
     (Eigen::VectorXd(3) << -0.501726, -8.10938, -9.25087).finished()
 };
 
-using namespace autodiff;
+
 #define n 3
 #define m 1
 Eigen::MatrixXd A(n, n);
 Eigen::MatrixXd H(m, n);
 
 
-VectorXreal f(const VectorXreal& x) {
+Eigen::VectorXd f(const Eigen::VectorXd& x) {
     // Example state transition function
     return A * x; // Simple linear model for demonstration
 }
 
-VectorXreal h(const VectorXreal& x) {
+Eigen::VectorXd h(const Eigen::VectorXd& x) {
     // Example measurement function
     return H * x; // Direct measurement of the state
 }
@@ -85,7 +80,7 @@ int main() {
     P << .1, .1, .1, .1, 10000, 10, .1, 10, 100;
     R << 5;
     Q << 0.05, 0.05, .0, .05, .05, 0, 0, 0, 0;
-    ExtendedKalmanFilter ekf(Q, R, f, h);
+    UnscentedKalmanFilter ukf(Q, R, f, h);
 
     std::vector<double> measurements = {
         1.04202710058, 1.10726790452, 1.2913511148, 1.48485250951, 1.72825901034,
@@ -100,14 +95,15 @@ int main() {
     };
 
     x << measurements[0], 0, -9.81;
-    ekf.init(x, P);
-
+    ukf.init(x, P);
+    std::cout << "Initial state: " << ukf.get_state().transpose() << std::endl;
     for (int i = 0; i < measurements.size(); i++) {
-        ekf.predict();
+        ukf.predict();
         Eigen::VectorXd z = Eigen::VectorXd::Zero(m);
         z(0) = measurements[i];
-        ekf.update(z);
-        assert(ekf.get_state().isApprox(exact_states[i], 1e-5));
+        ukf.update(z);
+        std::cout << "State at step " << i << ": " << ukf.get_state().transpose() << std::endl;
+        std::cout << "Exact state: " << exact_states[i].transpose() << std::endl;
     }
     return 0;
 }

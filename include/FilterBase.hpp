@@ -4,15 +4,19 @@
 class FilterBase {
 public:
     virtual ~FilterBase() = default;
-    void init(const Eigen::VectorXd& x, const Eigen::MatrixXd& P = Eigen::MatrixXd()){
+    virtual void init(const Eigen::VectorXd& x, const Eigen::MatrixXd& P = Eigen::MatrixXd()){
         this->x = x;
         this->P = (P.size() == 0) ? Eigen::MatrixXd::Identity(n, n) : P;
         predicted = false;
     };
     virtual void predict(Eigen::VectorXd u = Eigen::VectorXd()) = 0;
     virtual void update(const Eigen::VectorXd& z) = 0;
-    Eigen::VectorXd get_state(){
+    Eigen::VectorXd get_state() const {
         return this->x;
+    }
+
+    Eigen::MatrixXd get_cov() const {
+        return this->P;
     }
 
 protected:
